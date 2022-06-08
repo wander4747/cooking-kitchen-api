@@ -26,10 +26,10 @@ class UserController extends Controller
 
         try {
             User::create($data);
-            return response()->json(['success' => 'Usuário criado com suceso!']);
+            return response()->json(['success' => 'Usuário criado com suceso!'], 200);
         } catch (Exception $error) {
             dd($error);
-            return response()->json(['error' => 'Erro ao criar usuário!']);
+            return response()->json(['error' => 'Erro ao criar usuário!'], 400);
         }
     }
 
@@ -38,7 +38,7 @@ class UserController extends Controller
             $user = User::where('uuid', $uuid)->get()->first();
             
             if (!$user) {
-                return response()->json(['error' => 'O usuário não existe!']);
+                return response()->json(['error' => 'O usuário não existe!'], 404);
             }
 
             return $user;
@@ -49,7 +49,7 @@ class UserController extends Controller
         $user = User::where('uuid', $uuid)->get()->first();
             
         if (!$user) {
-            return response()->json(['error' => 'O usuário não existe!']);
+            return response()->json(['error' => 'O usuário não existe!'], 404);
         }
 
         $data = [
@@ -61,9 +61,9 @@ class UserController extends Controller
         try {
             $user->fill($data);
             $user->save();
-            return response()->json(['success' => 'O usuário foi editado com sucesso!']);
+            return response()->json(['success' => 'O usuário foi editado com sucesso!'], 200);
         } catch (Exception) {
-            return response()->json(['error' => 'erro ao editar usuário!']);
+            return response()->json(['error' => 'erro ao editar usuário!'], 400);
         }
     }
 
@@ -72,10 +72,10 @@ class UserController extends Controller
         $user = User::where('uuid', $uuid)->get()->first();
 
         if (!$user) {
-            return response()->json(['error' => 'O usuário não existe!']);
+            return response()->json(['error' => 'O usuário não existe!'], 404);
         }
 
         $user->delete();
-        return response()->json(['success' => 'O usuário foi excluído com sucesso!']);
+        return response()->json(['success' => 'O usuário foi excluído com sucesso!'], 200);
     }
 }

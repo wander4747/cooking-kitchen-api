@@ -36,10 +36,10 @@ class TipController extends Controller
         $tip = Tip::create($data);
 
         if (!$tip) {
-            return response()->json([ 'error' => 'Erro ao cadastrar dica!' ]);
+            return response()->json([ 'error' => 'Erro ao cadastrar dica!' ], 400);
         }
 
-        return response()->json([ 'success' => 'A dica foi criada com sucesso!' ]);
+        return response()->json([ 'success' => 'A dica foi criada com sucesso!' ], 200);
 
         }
 
@@ -48,7 +48,7 @@ class TipController extends Controller
         $tip = Tip::where('slug', $slug)->get()->first();
 
         if (!$tip) {
-            return response()->json(['error' => 'A dica não existe!']);
+            return response()->json(['error' => 'A dica não existe!'], 404);
         }
 
         return $tip;
@@ -62,7 +62,7 @@ class TipController extends Controller
         dd($tip);
 
         if (!$tip) {
-            return response()->json(['success' => 'Essa dica não existe!']);
+            return response()->json(['success' => 'Essa dica não existe!'], 404);
         }
 
         if ($request->gallery_directory) {
@@ -82,9 +82,9 @@ class TipController extends Controller
             $tip->fill($data);
             Storage::deleteDirectory($tip->gallery_directory);
             $tip->save();
-            return response()->json([ 'success' => 'A dica foi criada com sucesso!' ]);
+            return response()->json([ 'success' => 'A dica foi criada com sucesso!' ], 200);
         } catch (Exception) {
-            return response()->json([ 'error' => 'Erro ao cadastrar dica!' ]);
+            return response()->json([ 'error' => 'Erro ao cadastrar dica!' ], 400);
         }
     }
 
@@ -93,12 +93,12 @@ class TipController extends Controller
         $tip = Tip::where('slug', $slug)->get()->first();
         
         if (!$tip) {
-            return response()->json(['error' => 'A dica não existe!']);
+            return response()->json(['error' => 'A dica não existe!'], 404);
         }
 
         Storage::deleteDirectory($tip->gallery_directory);
         $tip->delete();
 
-        return response()->json(['success' => 'A dica foi excluída com sucesso!']);
+        return response()->json(['success' => 'A dica foi excluída com sucesso!'], 200);
     }
 }

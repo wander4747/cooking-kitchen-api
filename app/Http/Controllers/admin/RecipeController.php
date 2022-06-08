@@ -40,9 +40,9 @@ class RecipeController extends Controller
 
         try {
             Recipe::create($data);
-            return response()->json([ 'success' => 'A receita foi criada com sucesso!' ]);
+            return response()->json([ 'success' => 'A receita foi criada com sucesso!' ], 200);
         } catch (Exception $error) {
-            return response(404)->json([ 'error' => 'Erro ao cadastrar receita!' ]);
+            return response()->json([ 'error' => 'Erro ao cadastrar receita!' ], 400);
         }
     }
 
@@ -51,7 +51,7 @@ class RecipeController extends Controller
         $recipe = Recipe::where('slug', $slug)->get()->first();
 
         if (!$recipe) {
-            return response()->json(['error' => 'A receita não existe!']);
+            return response()->json(['error' => 'A receita não existe!'], 404);
         }
 
         return $recipe;
@@ -82,9 +82,9 @@ class RecipeController extends Controller
         try {
             $recipe->fill($input);
             $recipe->save();
-            return response()->json([ 'success' => 'A receita foi criada com sucesso!' ]);
+            return response()->json([ 'success' => 'A receita foi criada com sucesso!' ], 200);
         } catch (Exception $error) {
-            return response(404)->json([ 'error' => 'Erro ao cadastrar receita!' ]);
+            return response()->json([ 'error' => 'Erro ao cadastrar receita!' ], 404);
         }
     }
 
@@ -93,12 +93,12 @@ class RecipeController extends Controller
         $recipe = Recipe::where('slug', $slug)->get()->first();
         
         if (!$recipe) {
-            return response()->json(['error' => 'A receita não existe!']);
+            return response()->json(['error' => 'A receita não existe!'], 404);
         }
 
         Storage::deleteDirectory($recipe->gallery_directory);
         $recipe->delete();
 
-        return response()->json(['success' => 'A receita foi excluída com sucesso!']);
+        return response()->json(['success' => 'A receita foi excluída com sucesso!'], 200);
     }
 }
