@@ -4,7 +4,10 @@ use App\Http\Controllers\admin\CategoryController;
 use App\Http\Controllers\admin\RecipeController;
 use App\Http\Controllers\admin\TipController;
 use App\Http\Controllers\admin\UserController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::prefix('admin')->group(function () {
     Route::apiResources([
