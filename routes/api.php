@@ -9,12 +9,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::prefix('admin')->group(function () {
-    Route::apiResources([
-        'categories' => CategoryController::class,
-        'recipes' => RecipeController::class,
-        'tips' => TipController::class,
-        'users' => UserController::class
-    ]);    
-});
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('admin')->group(function () {
+        Route::apiResources([
+            'categories' => CategoryController::class,
+            'recipes' => RecipeController::class,
+            'tips' => TipController::class,
+            'users' => UserController::class
+        ]);    
+    });
+  });
 
