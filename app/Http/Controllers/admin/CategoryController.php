@@ -35,9 +35,9 @@ class CategoryController extends Controller
 
         try {
             Category::create($data);
-            return response()->json([ 'success' => 'A categoria foi criada com sucesso!' ]);
+            return response()->json([ 'success' => 'A categoria foi criada com sucesso!' ], 200);
         } catch (Exception $error) {
-            return response()->json([ 'error' => 'Erro ao cadastrar categoria!' ]);
+            return response()->json([ 'error' => 'Erro ao cadastrar categoria!' ], 400);
         }
     }
 
@@ -46,7 +46,7 @@ class CategoryController extends Controller
         $category = Category::where('slug', $slug)->get()->first();
 
         if (!$category) {
-            return response()->json(['error' => 'A categoria não existe!']);
+            return response()->json(['error' => 'A categoria não existe!'], 404);
         }
 
         return $category;
@@ -57,7 +57,7 @@ class CategoryController extends Controller
         $category = Category::where('slug', $slug)->get()->first();
 
         if (!$category) {
-            return response()->json(['error' => 'A categoria não existe.']);
+            return response()->json(['error' => 'A categoria não existe.'], 404);
         }
 
         if ($request->gallery_directory) {
@@ -77,9 +77,9 @@ class CategoryController extends Controller
             $category->fill($data);
             Storage::deleteDirectory($category->gallery_directory);
             $category->save();
-            return response()->json(['success' => 'A categoria foi editada com sucesso!']);
+            return response()->json(['success' => 'A categoria foi editada com sucesso!'], 200);
         } catch (Exception $error) {
-            return response()->json([ 'error' => 'Erro ao editar categoria!' ]);
+            return response()->json([ 'error' => 'Erro ao editar categoria!' ], 400);
         }
 
     }
@@ -89,11 +89,11 @@ class CategoryController extends Controller
         $category = Category::where('slug', $slug)->get()->first();
         
         if (!$category) {
-            return response()->json(['error' => 'A categoria não existe!']);
+            return response()->json(['error' => 'A categoria não existe!', 404]);
         }
 
         $category->delete();
 
-        return response()->json(['success' => 'A categoria foi excluída com sucesso!']);
+        return response()->json(['success' => 'A categoria foi excluída com sucesso!'], 200);
     }
 }
