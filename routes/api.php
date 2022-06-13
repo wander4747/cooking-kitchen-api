@@ -16,7 +16,7 @@ Route::middleware('auth:sanctum')->group(function () {
             'recipes' => RecipeController::class,
             'tips' => TipController::class,
             'users' => UserController::class
-        ]);    
+        ]);
     });
   });
 

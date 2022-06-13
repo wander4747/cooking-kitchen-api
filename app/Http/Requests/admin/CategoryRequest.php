@@ -7,12 +7,12 @@ use Illuminate\Foundation\Http\FormRequest;
 class CategoryRequest extends FormRequest
 {
 
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             'title' => 'required|max:150|unique:categories',
@@ -22,7 +22,7 @@ class CategoryRequest extends FormRequest
         ];
     }
 
-    public function messages()
+    public function messages(): array
     {
         return [
             'title.required' => 'Este campo é obrigatório.',

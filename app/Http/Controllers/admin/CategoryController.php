@@ -4,96 +4,92 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\CategoryRequest;
-use App\Models\Category;
+use App\Repositories\Admin\Contracts\CategoryRepositoryInterface;
 use Exception;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
 
-    public function index()
+    public function __construct(protected CategoryRepositoryInterface $model) {}
+
+    public function index(): Collection
     {
-        return Category::all();
+        return $this->model->all();
     }
 
-    public function store(CategoryRequest $request)
+    public function store(CategoryRequest $request): JsonResponse
     {
 
-        if ($request->gallery_directory) {
-            $category_image_directory = '/images/categories/' . Str::slug($request->title);
-            $request->gallery_directory->store($category_image_directory);
-        }
+//        if ($request->images) {
+//            $category_image_directory = '/images/categories/' . Str::slug($request->title);
+//            $request->images->store($category_image_directory);
+//        }
 
         $data = [
             'title' => $request->title,
             'slug' => Str::slug($request->title),
-            'gallery_directory' => '/images/tips/' . Str::slug($request->title),
+            'gallery_directory' => '/images/categories/' . Str::slug($request->title),
             'is_active' => $request->is_active,
             'in_home' => $request->in_home,
-        ]; 
+        ];
 
         try {
-            Category::create($data);
-            return response()->json([ 'success' => 'A categoria foi criada com sucesso!' ], 200);
+            $this->model->create($data);
+            return response()->json([ 'success' => 'A categoria foi criada com sucesso!' ]);
         } catch (Exception $error) {
             return response()->json([ 'error' => 'Erro ao cadastrar categoria!' ], 400);
         }
     }
 
-    public function show($slug)
+    public function show(string $slug): Collection|JsonResponse
     {
-        $category = Category::where('slug', $slug)->get()->first();
-
-        if (!$category) {
-            return response()->json(['error' => 'A categoria não existe!'], 404);
-        }
-
-        return $category;
-    }
-
-    public function update(CategoryRequest $request, $slug)
-    {
-        $category = Category::where('slug', $slug)->get()->first();
-
-        if (!$category) {
-            return response()->json(['error' => 'A categoria não existe.'], 404);
-        }
-
-        if ($request->gallery_directory) {
-            $category_image_directory = '/images/categories/' . Str::slug($request->title);
-            $request->gallery_directory->store($category_image_directory);
-        }
-
-        $data = [
-            'title' => $request->title,
-            'slug' => Str::slug($request->title),
-            'gallery_directory' => $request->gallery_directory,
-            'is_active' => $request->is_active,
-            'in_home' => $request->in_home
-        ];
-
         try {
-            $category->fill($data);
-            Storage::deleteDirectory($category->gallery_directory);
-            $category->save();
-            return response()->json(['success' => 'A categoria foi editada com sucesso!'], 200);
-        } catch (Exception $error) {
-            return response()->json([ 'error' => 'Erro ao editar categoria!' ], 400);
+            return $this->model->findBySlug($slug);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Essa categoria não existe!'], 404);
         }
-
     }
 
-    public function destroy($slug)
+    public function update(CategoryRequest $request, string $slug): JsonResponse
     {
-        $category = Category::where('slug', $slug)->get()->first();
-        
-        if (!$category) {
-            return response()->json(['error' => 'A categoria não existe!', 404]);
+        try {
+            $this->model->findBySlug($slug);
+
+            if ($request->images) {
+                $category_image_directory = '/images/categories/' . Str::slug($request->title);
+                $request->images->store($category_image_directory);
+            }
+
+            $data = [
+                'title' => $request->title,
+                'slug' => Str::slug($request->title),
+                'gallery_directory' => $request->images,
+                'is_active' => $request->is_active,
+                'in_home' => $request->in_home,
+                'gallery_dir_name' => 'categories'
+            ];
+
+            $this->model->update($slug, $data);
+
+            return response()->json(['success' => 'A categoria foi atualizada com sucesso!']);
+
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Essa categoria não existe!'], 404);
         }
+    }
 
-        $category->delete();
+    public function destroy($slug): JsonResponse
+    {
+        try {
+            $this->model->delete($slug);
+            return response()->json(['success' => 'A categoria foi excluída com sucesso!']);
 
-        return response()->json(['success' => 'A categoria foi excluída com sucesso!'], 200);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Essa categoria não existe!'], 404);
+        }
     }
 }

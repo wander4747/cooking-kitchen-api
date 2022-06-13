@@ -55,11 +55,9 @@ class TipController extends Controller
     }
 
     public function update(TipRequest $request, $slug)
-    { 
+    {
 
         $tip = Tip::where('slug', $slug)->get()->first();
-
-        dd($tip);
 
         if (!$tip) {
             return response()->json(['success' => 'Essa dica não existe!'], 404);
@@ -91,7 +89,7 @@ class TipController extends Controller
     public function destroy($slug)
     {
         $tip = Tip::where('slug', $slug)->get()->first();
-        
+
         if (!$tip) {
             return response()->json(['error' => 'A dica não existe!'], 404);
         }
