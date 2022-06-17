@@ -28,7 +28,6 @@ class UserController extends Controller
             User::create($data);
             return response()->json(['success' => 'Usuário criado com suceso!'], 200);
         } catch (Exception $error) {
-            dd($error);
             return response()->json(['error' => 'Erro ao criar usuário!'], 400);
         }
     }
@@ -36,7 +35,7 @@ class UserController extends Controller
     public function show($uuid)
     {
             $user = User::where('uuid', $uuid)->get()->first();
-            
+
             if (!$user) {
                 return response()->json(['error' => 'O usuário não existe!'], 404);
             }
@@ -47,7 +46,7 @@ class UserController extends Controller
     public function update(UserRequest $request, $uuid)
     {
         $user = User::where('uuid', $uuid)->get()->first();
-            
+
         if (!$user) {
             return response()->json(['error' => 'O usuário não existe!'], 404);
         }

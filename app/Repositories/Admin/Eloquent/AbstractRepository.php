@@ -31,18 +31,14 @@ abstract class AbstractRepository
      */
     public function create(array $data): void
     {
-//        if ($data['gallery_directory']) {
-//            $category_image_directory = "/images/{$data['gallery_dir_name']}/" . Str::slug($data['title']);
-//            $data['gallery_directory']->store($category_image_directory);
-//        }
-
         $this->model->create($data);
     }
 
     /**
      * @param string $slug
+     * @return mixed
      */
-    public function findBySlug(string $slug)
+    public function findBySlug(string $slug): mixed
     {
         $model = $this->model
             ->where('slug', $slug)
@@ -52,7 +48,6 @@ abstract class AbstractRepository
         if (!$model) {
             throw new ModelNotFoundException();
         }
-
         return $model;
     }
 
