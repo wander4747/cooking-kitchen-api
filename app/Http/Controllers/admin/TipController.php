@@ -4,6 +4,9 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\TipRequest;
+use App\Repositories\Admin\Contracts\TipRepositoryInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Exception;
 use App\Models\Tip;
@@ -12,9 +15,11 @@ use Illuminate\Support\Facades\Storage;
 class TipController extends Controller
 {
 
-    public function index()
+    public function __construct(protected TipRepositoryInterface $model) {}
+
+    public function index(): Collection
     {
-        return Tip::all();
+        return $this->model->all();
     }
 
     public function store(TipRequest $request)
@@ -33,39 +38,28 @@ class TipController extends Controller
             'tipz' => $request->tip,
         ];
 
-        $tip = Tip::create($data);
-
-        if (!$tip) {
-            return response()->json([ 'error' => 'Erro ao cadastrar dica!' ], 400);
-        }
-
-        return response()->json([ 'success' => 'A dica foi criada com sucesso!' ], 200);
+        $this->model->create($data);
 
         }
 
     public function show($slug)
     {
-        $tip = Tip::where('slug', $slug)->get()->first();
-
-        if (!$tip) {
-            return response()->json(['error' => 'A dica não existe!'], 404);
+        try {
+            return $this->model->findBySlug($slug);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Essa dica não existe!'], 404);
         }
-
-        return $tip;
     }
 
     public function update(TipRequest $request, $slug)
     {
 
-        $tip = Tip::where('slug', $slug)->get()->first();
+        $model = $this->model->findBySlug($slug);
 
-        if (!$tip) {
-            return response()->json(['success' => 'Essa dica não existe!'], 404);
-        }
-
-        if ($request->gallery_directory) {
+        if ($request->gallery) {
+            Storage::deleteDirectory($model->gallery_directory);
             $tip_image_directory = '/images/tips/' . Str::slug($request->title);
-            $request->gallery_directory->store($tip_image_directory);
+            $request->gallery->store($tip_image_directory);
         }
 
         $data = [
@@ -76,27 +70,17 @@ class TipController extends Controller
             'tip' => $request->tip,
         ];
 
-        try {
-            $tip->fill($data);
-            Storage::deleteDirectory($tip->gallery_directory);
-            $tip->save();
-            return response()->json([ 'success' => 'A dica foi criada com sucesso!' ], 200);
-        } catch (Exception) {
-            return response()->json([ 'error' => 'Erro ao cadastrar dica!' ], 400);
-        }
+        $this->model->update($slug, $data);
     }
 
     public function destroy($slug)
     {
-        $tip = Tip::where('slug', $slug)->get()->first();
+        try {
+            $this->model->delete($slug);
+            return response()->json(['success' => 'A dica foi excluída com sucesso!']);
 
-        if (!$tip) {
-            return response()->json(['error' => 'A dica não existe!'], 404);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Essa dica não existe!'], 404);
         }
-
-        Storage::deleteDirectory($tip->gallery_directory);
-        $tip->delete();
-
-        return response()->json(['success' => 'A dica foi excluída com sucesso!'], 200);
     }
 }

@@ -51,6 +51,7 @@ abstract class AbstractRepository
         return $model;
     }
 
+
     /**
      * @param string $slug
      * @param array $data

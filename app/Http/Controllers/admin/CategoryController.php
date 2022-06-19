@@ -17,9 +17,7 @@ use Illuminate\Support\Str;
 class CategoryController extends Controller
 {
 
-    public function __construct(protected CategoryRepositoryInterface $model)
-    {
-    }
+    public function __construct(protected CategoryRepositoryInterface $model) {}
 
     public function index(): Collection
     {
@@ -75,8 +73,6 @@ class CategoryController extends Controller
             ];
 
             $this->model->update($slug, $data);
-
-            return response()->json(['success' => 'A categoria foi atualizada com sucesso!']);
 
     }
 
