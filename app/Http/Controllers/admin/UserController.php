@@ -5,15 +5,19 @@ namespace App\Http\Controllers\admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\UserRequest;
 use App\Models\User;
+use App\Repositories\Admin\Contracts\UserRepositoryInterface;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
 use Exception;
 
 class UserController extends Controller
 {
 
+    public function __construct(protected UserRepositoryInterface $model) {}
+
     public function index()
     {
-        return User::all();
+        return $this->model->all();
     }
 
     public function store(UserRequest $request)
@@ -24,58 +28,37 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ];
 
-        try {
-            User::create($data);
-            return response()->json(['success' => 'Usuário criado com suceso!'], 200);
-        } catch (Exception $error) {
-            dd($error);
-            return response()->json(['error' => 'Erro ao criar usuário!'], 400);
-        }
+        $this->model->create($data);
     }
 
     public function show($uuid)
     {
-            $user = User::where('uuid', $uuid)->get()->first();
-            
-            if (!$user) {
-                return response()->json(['error' => 'O usuário não existe!'], 404);
-            }
-
-            return $user;
+        try {
+            return $this->model->findByUuid($uuid);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Essa categoria não existe!'], 404);
+        }
         }
 
     public function update(UserRequest $request, $uuid)
     {
-        $user = User::where('uuid', $uuid)->get()->first();
-            
-        if (!$user) {
-            return response()->json(['error' => 'O usuário não existe!'], 404);
-        }
-
         $data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ];
 
-        try {
-            $user->fill($data);
-            $user->save();
-            return response()->json(['success' => 'O usuário foi editado com sucesso!'], 200);
-        } catch (Exception) {
-            return response()->json(['error' => 'erro ao editar usuário!'], 400);
-        }
+        $this->model->updateUuid($uuid, $data);
     }
 
     public function destroy($uuid)
     {
-        $user = User::where('uuid', $uuid)->get()->first();
+        try {
+            $this->model->deleteUuid($uuid);
+            return response()->json(['success' => 'A categoria foi excluída com sucesso!']);
 
-        if (!$user) {
-            return response()->json(['error' => 'O usuário não existe!'], 404);
+        } catch (ModelNotFoundException) {
+            return response()->json(['error' => 'Essa categoria não existe!'], 404);
         }
-
-        $user->delete();
-        return response()->json(['success' => 'O usuário foi excluído com sucesso!'], 200);
     }
 }
