@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
@@ -14,9 +16,7 @@ use Illuminate\Support\Facades\Storage;
 class RecipeController extends Controller
 {
 
-    public function __construct(protected RecipeRepositoryInterface $model)
-    {
-    }
+    public function __construct(protected RecipeRepositoryInterface $model) {}
 
     public function index(): Collection
     {

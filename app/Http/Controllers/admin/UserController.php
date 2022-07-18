@@ -1,26 +1,28 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\UserRequest;
-use App\Models\User;
 use App\Repositories\Admin\Contracts\UserRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
-use Exception;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
 
     public function __construct(protected UserRepositoryInterface $model) {}
 
-    public function index()
+    public function index(): Collection
     {
         return $this->model->all();
     }
 
-    public function store(UserRequest $request)
+    public function store(UserRequest $request): void
     {
         $data = [
             'name' => $request->name,
@@ -31,7 +33,7 @@ class UserController extends Controller
         $this->model->create($data);
     }
 
-    public function show($uuid)
+    public function show($uuid): JsonResponse|Collection
     {
         try {
             return $this->model->findByUuid($uuid);
@@ -40,7 +42,7 @@ class UserController extends Controller
         }
         }
 
-    public function update(UserRequest $request, $uuid)
+    public function update(UserRequest $request, $uuid): void
     {
         $data = [
             'name' => $request->name,
@@ -51,7 +53,7 @@ class UserController extends Controller
         $this->model->updateUuid($uuid, $data);
     }
 
-    public function destroy($uuid)
+    public function destroy($uuid): JsonResponse
     {
         try {
             $this->model->deleteUuid($uuid);
