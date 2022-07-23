@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\TipRequest;
 use App\Repositories\Admin\Contracts\TipRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Exception;
-use App\Models\Tip;
 use Illuminate\Support\Facades\Storage;
 
 class TipController extends Controller
@@ -22,12 +23,12 @@ class TipController extends Controller
         return $this->model->all();
     }
 
-    public function store(TipRequest $request)
+    public function store(TipRequest $request): void
     {
 
-        if ($request->gallery_directory) {
+        if ($request->gallery) {
             $tip_image_directory = '/images/tips/' . Str::slug($request->title);
-            $request->gallery_directory->store($tip_image_directory);
+            $request->gallery->store($tip_image_directory);
         }
 
         $data = [
@@ -35,14 +36,14 @@ class TipController extends Controller
             'slug' => Str::slug($request->title),
             'gallery_directory' => '/images/tips/' . Str::slug($request->title),
             'category_uuid' => $request->category_uuid,
-            'tipz' => $request->tip,
+            'tip' => $request->tip,
         ];
 
         $this->model->create($data);
 
-        }
+    }
 
-    public function show($slug)
+    public function show($slug): JsonResponse|Collection
     {
         try {
             return $this->model->findBySlug($slug);
@@ -51,7 +52,7 @@ class TipController extends Controller
         }
     }
 
-    public function update(TipRequest $request, $slug)
+    public function update(TipRequest $request, $slug): void
     {
 
         $model = $this->model->findBySlug($slug);
@@ -73,7 +74,7 @@ class TipController extends Controller
         $this->model->update($slug, $data);
     }
 
-    public function destroy($slug)
+    public function destroy($slug): JsonResponse
     {
         try {
             $this->model->delete($slug);

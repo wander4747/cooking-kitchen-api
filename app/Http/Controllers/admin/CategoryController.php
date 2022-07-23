@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\CategoryRequest;
 use App\Models\Category;
 use App\Repositories\Admin\Contracts\CategoryRepositoryInterface;
-use Dflydev\DotAccessData\Data;
-use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
@@ -53,7 +53,7 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(CategoryRequest $request, string $slug): JsonResponse
+    public function update(CategoryRequest $request, string $slug): void
     {
 
             $model = $this->model->findBySlug($slug);

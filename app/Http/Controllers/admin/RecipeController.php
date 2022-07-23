@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
@@ -14,9 +16,7 @@ use Illuminate\Support\Facades\Storage;
 class RecipeController extends Controller
 {
 
-    public function __construct(protected RecipeRepositoryInterface $model)
-    {
-    }
+    public function __construct(protected RecipeRepositoryInterface $model) {}
 
     public function index(): Collection
     {
@@ -82,7 +82,7 @@ class RecipeController extends Controller
         $this->model->update($slug, $data);
     }
 
-    public function destroy($slug): JsonResponse|null
+    public function destroy($slug)
     {
         $model = $this->model->findBySlug($slug);
 
@@ -91,7 +91,7 @@ class RecipeController extends Controller
             Storage::deleteDirectory($model->gallery_directory);
 
         } catch (ModelNotFoundException) {
-            return response()->json(['error' => 'Essa categoria não existe!'], 404);
+            return response()->json(['error' => 'Essa receita não existe!'], 404);
         }
 
 
