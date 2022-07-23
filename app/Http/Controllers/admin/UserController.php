@@ -38,7 +38,7 @@ class UserController extends Controller
         try {
             return $this->model->findByUuid($uuid);
         } catch (ModelNotFoundException) {
-            return response()->json(['error' => 'Essa categoria não existe!'], 404);
+            return response()->json(['error' => 'Esse usuário não existe!'], 404);
         }
         }
 
@@ -57,10 +57,10 @@ class UserController extends Controller
     {
         try {
             $this->model->deleteUuid($uuid);
-            return response()->json(['success' => 'A categoria foi excluída com sucesso!']);
+            return response()->json(['success' => 'O usuário foi excluído com sucesso!']);
 
         } catch (ModelNotFoundException) {
-            return response()->json(['error' => 'Essa categoria não existe!'], 404);
+            return response()->json(['error' => 'Essa usuário não existe!'], 404);
         }
     }
 }

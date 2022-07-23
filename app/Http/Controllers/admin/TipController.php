@@ -26,9 +26,9 @@ class TipController extends Controller
     public function store(TipRequest $request): void
     {
 
-        if ($request->gallery_directory) {
+        if ($request->gallery) {
             $tip_image_directory = '/images/tips/' . Str::slug($request->title);
-            $request->gallery_directory->store($tip_image_directory);
+            $request->gallery->store($tip_image_directory);
         }
 
         $data = [
@@ -36,12 +36,12 @@ class TipController extends Controller
             'slug' => Str::slug($request->title),
             'gallery_directory' => '/images/tips/' . Str::slug($request->title),
             'category_uuid' => $request->category_uuid,
-            'tipz' => $request->tip,
+            'tip' => $request->tip,
         ];
 
         $this->model->create($data);
 
-        }
+    }
 
     public function show($slug): JsonResponse|Collection
     {
