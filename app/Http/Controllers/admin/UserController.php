@@ -6,61 +6,38 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\UserRequest;
-use App\Repositories\Admin\Contracts\UserRepositoryInterface;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Hash;
+use App\Services\Admin\UserService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
-
-    public function __construct(protected UserRepositoryInterface $model) {}
+    public function __construct(protected UserService $service)
+    {
+    }
 
     public function index(): Collection
     {
-        return $this->model->all();
+        return $this->service->index();
     }
 
     public function store(UserRequest $request): void
     {
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ];
-
-        $this->model->create($data);
+        $this->service->store($request);
     }
 
     public function show($uuid): JsonResponse|Collection
     {
-        try {
-            return $this->model->findByUuid($uuid);
-        } catch (ModelNotFoundException) {
-            return response()->json(['error' => 'Esse usuário não existe!'], 404);
-        }
-        }
+        return $this->service->show($uuid);
+    }
 
     public function update(UserRequest $request, $uuid): void
     {
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ];
-
-        $this->model->updateUuid($uuid, $data);
+        $this->service->update($request, $uuid);
     }
 
     public function destroy($uuid): JsonResponse
     {
-        try {
-            $this->model->deleteUuid($uuid);
-            return response()->json(['success' => 'O usuário foi excluído com sucesso!']);
-
-        } catch (ModelNotFoundException) {
-            return response()->json(['error' => 'Essa usuário não existe!'], 404);
-        }
+        return $this->service->destroy($uuid);
     }
 }

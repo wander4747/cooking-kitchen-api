@@ -6,82 +6,38 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\TipRequest;
-use App\Repositories\Admin\Contracts\TipRepositoryInterface;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Services\Admin\TipService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 
 class TipController extends Controller
 {
-
-    public function __construct(protected TipRepositoryInterface $model) {}
+    public function __construct(protected TipService $service)
+    {
+    }
 
     public function index(): Collection
     {
-        return $this->model->all();
+        return $this->service->index();
     }
 
     public function store(TipRequest $request): void
     {
-
-        if ($request->gallery) {
-            $tip_image_directory = '/images/tips/' . Str::slug($request->title);
-            $request->gallery->store($tip_image_directory);
-        }
-
-        $data = [
-            'title' => $request->title,
-            'slug' => Str::slug($request->title),
-            'gallery_directory' => '/images/tips/' . Str::slug($request->title),
-            'category_uuid' => $request->category_uuid,
-            'tip' => $request->tip,
-        ];
-
-        $this->model->create($data);
-
+        $this->service->store($request);
     }
 
     public function show($slug): JsonResponse|Collection
     {
-        try {
-            return $this->model->findBySlug($slug);
-        } catch (ModelNotFoundException) {
-            return response()->json(['error' => 'Essa dica não existe!'], 404);
-        }
+        return $this->service->show($slug);
     }
 
     public function update(TipRequest $request, $slug): void
     {
-
-        $model = $this->model->findBySlug($slug);
-
-        if ($request->gallery) {
-            Storage::deleteDirectory($model->gallery_directory);
-            $tip_image_directory = '/images/tips/' . Str::slug($request->title);
-            $request->gallery->store($tip_image_directory);
-        }
-
-        $data = [
-            'title' => $request->title,
-            'slug' => Str::slug($request->title),
-            'gallery_directory' => '/images/tips/' . Str::slug($request->title),
-            'category_uuid' => $request->category_uuid,
-            'tip' => $request->tip,
-        ];
-
-        $this->model->update($slug, $data);
+        $this->service->update($request, $slug);
     }
 
     public function destroy($slug): JsonResponse
     {
-        try {
-            $this->model->delete($slug);
-            return response()->json(['success' => 'A dica foi excluída com sucesso!']);
-
-        } catch (ModelNotFoundException) {
-            return response()->json(['error' => 'Essa dica não existe!'], 404);
-        }
+        return $this->service->destroy($slug);
     }
 }
