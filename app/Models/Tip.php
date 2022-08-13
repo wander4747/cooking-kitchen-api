@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use App\Traits\Uuid;
@@ -11,7 +10,7 @@ class Tip extends Model
     use HasFactory, Uuid;
 
     protected $table = 'tips';
-    
+
     protected $primaryKey = 'uuid';
 
     protected $fillable = [

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests\admin;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -14,7 +13,7 @@ class RecipeRequest extends FormRequest
     public function rules()
     {
         return [
-            
+
             'title' => 'required|unique:recipes,title|max:150',
             'category_uuid' => 'required',
             'gallery_directory' => [
@@ -40,7 +39,7 @@ class RecipeRequest extends FormRequest
             'title.max' => 'Limite de 150 caracteres atingido!',
 
             'category_uuid.required' => 'Este campo é obrigatório!',
-            
+
             'gallery_directory.image' => 'É permitido somente imagens!',
             'gallery_directory.max' => 'Limite de 1M de tamanho atingido!',
 
@@ -54,13 +53,12 @@ class RecipeRequest extends FormRequest
             'number_of_people_served.numeric' => 'Este campo aceita apenas números!',
 
             'ingredients.required' => 'Este campo é obrigatório!',
-            
+
             'preparation_mode.required' => 'Este campo é obrigatório',
 
             'is_active.required' => 'Este campo é obrigatório',
             'is_active.boolean' => 'Valor inválido!'
 
         ];
-
     }
 }

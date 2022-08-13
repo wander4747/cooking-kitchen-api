@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories\Admin\Eloquent;
 
 use App\Models\Tip;

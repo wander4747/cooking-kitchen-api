@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories\Admin\Eloquent;
 
 use App\Models\User;
@@ -52,5 +51,4 @@ class UserRepository extends AbstractRepository implements UserRepositoryInterfa
 
         $model->delete();
     }
-
 }

@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types = 1);
-
+declare(strict_types=1);
 namespace App\Services\Admin;
 
 use App\Http\Requests\admin\CategoryRequest;
@@ -39,7 +38,6 @@ class CategoryService
             'in_home' => $request->in_home,
         ];
 
-
         $this->model->create($data);
     }
 
@@ -63,12 +61,12 @@ class CategoryService
         }
 
         $data = [
-                'title' => $request->title,
-                'slug' => Str::slug($request->title),
-                'gallery_directory' => '/images/categories/' . Str::slug($request->title),
-                'is_active' => $request->is_active,
-                'in_home' => $request->in_home,
-            ];
+            'title' => $request->title,
+            'slug' => Str::slug($request->title),
+            'gallery_directory' => '/images/categories/' . Str::slug($request->title),
+            'is_active' => $request->is_active,
+            'in_home' => $request->in_home,
+        ];
 
         $this->model->update($slug, $data);
     }

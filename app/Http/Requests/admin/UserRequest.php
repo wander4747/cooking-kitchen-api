@@ -1,12 +1,10 @@
 <?php
-
 namespace App\Http\Requests\admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
 class UserRequest extends FormRequest
 {
-
     public function authorize()
     {
         return true;

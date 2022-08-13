@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories\Admin\Eloquent;
 
 use App\Http\Requests\admin\CategoryRequest;
@@ -50,7 +49,6 @@ abstract class AbstractRepository
         }
         return $model;
     }
-
 
     /**
      * @param string $slug

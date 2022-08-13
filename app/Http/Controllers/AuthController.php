@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -13,14 +12,14 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => $request->password,
         ];
-      
+
         if (!Auth::attempt($data)) {
             return response()->json('E-mail ou senha incorretos!', 401);
         }
-      
+
         $user = Auth::user();
         $token = $user->createToken('JWT');
-      
+
         return response()->json($token->plainTextToken, 200);
     }
 }
